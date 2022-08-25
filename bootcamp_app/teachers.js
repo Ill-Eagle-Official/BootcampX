@@ -13,11 +13,14 @@ FROM teachers
 JOIN assistance_requests ON assistance_requests.teacher_id = teachers.id
 JOIN students ON students.id = assistance_requests.student_id
 JOIN cohorts ON cohorts.id = students.cohort_id
-WHERE cohorts.name = 'JUL02'
-ORDER BY teachers.name;
+WHERE cohorts.name = $1
+ORDER BY teacher;
 `;
 
-pool.query(queryString)
+const cohortName = process.argv[2];
+const values = [`%${cohortName}%`];
+
+pool.query(queryString, values)
 .then(res => {
   res.rows.forEach(row => {
     console.log(`${row.cohort}: ${row.teacher}`);
